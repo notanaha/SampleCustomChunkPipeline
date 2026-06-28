@@ -1,0 +1,20 @@
+python-dotenv
+azure-identity
+azure-core
+# Preview build required for KnowledgeBase / ContentUnderstanding models used by 101
+azure-search-documents==11.7.0b2
+# Content Understanding data-plane SDK (prebuilt-documentSearch markdown extraction)
+azure-ai-contentunderstanding
+# Azure OpenAI (embeddings + vision verbalization)
+openai
+# Token counting for chunking
+tiktoken
+# Blob upload for blob_url
+azure-storage-blob
+# PDF -> page images (requires poppler binaries on PATH)
+pdf2image
+Pillow
+# Retry helper
+tenacity
+# Excel -> PDF on Windows (optional; only needed by 00_excel_to_pdf if using Excel COM)
+pywin32; platform_system == "Windows"

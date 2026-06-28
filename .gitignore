@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Local secrets / config (copy sample.env -> .env)
+.env
+
+# Runtime-generated working folders (created by the notebooks)
+/pdf/
+/image/
+/markdown/
+/verbalized/
+/shards/
