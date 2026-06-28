@@ -33,6 +33,33 @@ searches them uniformly (hybrid + semantic).
 After step 05, run `SampleContentUnderstandingSkill2/101_knowledge_base.ipynb` unchanged
 (make sure `NAME_PREFIX` and `AZURE_SEARCH_ENDPOINT` match).
 
+## Usage
+
+### Option A — Notebooks
+
+Open and run the notebooks `00` → `05` in order from this folder. Each notebook reads
+`../.env` and writes its working folders here (`./pdf`, `./image`, `./markdown`,
+`./verbalized`, `./shards`).
+
+### Option B — Python scripts (`script/`)
+
+`script/` contains a `.py` equivalent of every notebook for headless / CLI runs. Each script
+adds the parent folder to `sys.path` (to import `utils_cc.py`) and `chdir`s up one level, so it
+behaves exactly like the notebooks regardless of where you launch it from. Run them in order:
+
+```bash
+python script/00_excel_to_pdf.py
+python script/01_pdf_to_images.py
+python script/02_extract_markdown.py
+python script/03_verbalize_images.py
+python script/04_create_index.py
+python script/05_chunk_embed_push.py
+```
+
+`utils_cc.py` is shared (the scripts import the one in the parent folder — no duplicate copy).
+`03` is idempotent: re-running it skips images already verbalized, so an interrupted run can be
+resumed safely.
+
 ## Chunking configuration (requirement)
 
 Adjust at the top of `05`, or via `.env`:
@@ -98,7 +125,9 @@ customChunkPipeline/
 ├── requirements.txt
 ├── sample.env           # copy to .env
 ├── .gitignore
-└── README.md
+├── README.md
+└── script/              # .py equivalents of the notebooks (headless runs)
+    ├── 00_excel_to_pdf.py ... 05_chunk_embed_push.py
 ```
 
 The working folders `pdf/`, `image/`, `markdown/`, `verbalized/`, and `shards/` are created at
