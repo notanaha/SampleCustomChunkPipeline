@@ -19,7 +19,7 @@ searches them uniformly (hybrid + semantic).
 
 | # | Notebook | What it does | Input → Output |
 |---|---|---|---|
-| 00 | `00_excel_to_pdf.ipynb` | Convert Excel → PDF and collect PDFs | `../data/*` → `./pdf/*.pdf` |
+| 00 | `00_office_to_pdf.ipynb` | Convert Excel/PowerPoint/Word → PDF and collect PDFs | `../data/*` → `./pdf/*.pdf` |
 | 01 | `01_pdf_to_images.ipynb` | Render PDF → one JPEG per page | `./pdf` → `./image` |
 | 02 | `02_extract_markdown.ipynb` | Extract Markdown via Content Understanding `prebuilt-documentSearch` | `./pdf` → `./markdown` |
 | 03 | `03_verbalize_images.ipynb` | Verbalize page images with GPT Vision (fixed prompt + Title/Page header) | `./image` → `./verbalized` |
@@ -48,7 +48,7 @@ adds the parent folder to `sys.path` (to import `utils_cc.py`) and `chdir`s up o
 behaves exactly like the notebooks regardless of where you launch it from. Run them in order:
 
 ```bash
-python script/00_excel_to_pdf.py
+python script/00_office_to_pdf.py
 python script/01_pdf_to_images.py
 python script/02_extract_markdown.py
 python script/03_verbalize_images.py
@@ -85,8 +85,8 @@ friendly, and is easy to resume.
 1. `pip install -r requirements.txt`
 2. Copy `sample.env` to `.env` and fill in the values
 3. **poppler** (for `01`): place the binaries in `../poppler/bin` or on `PATH`
-4. **Excel → PDF** (for `00`, only if you process Excel): put LibreOffice (`soffice`) on `PATH`,
-   or use Windows + Microsoft Excel + `pywin32`. If neither is available, convert to PDF manually
+4. **Office → PDF** (for `00`, only if you process Excel/PowerPoint/Word): put LibreOffice (`soffice`) on `PATH`,
+   or use Windows + Microsoft Excel/PowerPoint/Word + `pywin32`. If neither is available, convert to PDF manually
    and drop the files into `./pdf`
 5. `az login` (when using Entra ID authentication)
 
@@ -115,7 +115,7 @@ See `sample.env`. Key ones: `NAME_PREFIX`, `AZURE_SEARCH_ENDPOINT`, `AZURE_OPENA
 
 ```
 customChunkPipeline/
-├── 00_excel_to_pdf.ipynb
+├── 00_office_to_pdf.ipynb
 ├── 01_pdf_to_images.ipynb
 ├── 02_extract_markdown.ipynb
 ├── 03_verbalize_images.ipynb
@@ -127,7 +127,7 @@ customChunkPipeline/
 ├── .gitignore
 ├── README.md
 └── script/              # .py equivalents of the notebooks (headless runs)
-    ├── 00_excel_to_pdf.py ... 05_chunk_embed_push.py
+    ├── 00_office_to_pdf.py ... 05_chunk_embed_push.py
 ```
 
 The working folders `pdf/`, `image/`, `markdown/`, `verbalized/`, and `shards/` are created at
