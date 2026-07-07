@@ -19,16 +19,18 @@ searches them uniformly (hybrid + semantic).
 
 | # | Notebook | What it does | Input → Output |
 |---|---|---|---|
-| 00 | `00_office_to_pdf.ipynb` | Convert Excel/PowerPoint/Word → PDF and collect PDFs | `../data/*` → `./pdf/*.pdf` |
+| 00 | `00_office_to_pdf.ipynb` | Convert Excel/PowerPoint/Word/HTML → PDF and collect PDFs | `../data/*` → `./pdf/*.pdf` |
 | 01 | `01_pdf_to_images.ipynb` | Render PDF → one JPEG per page | `./pdf` → `./image` |
 | 02 | `02_extract_markdown.ipynb` | Extract Markdown via Content Understanding `prebuilt-documentSearch` | `./pdf` → `./markdown` |
 | 03 | `03_verbalize_images.ipynb` | Verbalize page images with GPT Vision (fixed prompt + Title/Page header) | `./image` → `./verbalized` |
 | 04 | `04_create_index.ipynb` | Create `{NAME_PREFIX}-index` via SDK (101-compatible schema) | — |
 | 05 | `05_chunk_embed_push.ipynb` | Token chunking + embeddings + Blob upload + **sequential shard push** | the above → AI Search + `./shards` |
 
-> **Input data**: place your source documents (`.pdf`, `.xlsx`) in a `data/` folder one level
+> **Input data**: place your source documents (`.pdf`, `.xlsx`, `.pptx`, `.docx`, `.html`) in a `data/` folder one level
 > above this directory (the notebooks read from `../data`). After copying this folder elsewhere
 > for publishing, create that `../data` folder and add your files before running.
+> For HTML inputs, also place any images the HTML references (SVG / PNG / JPG, same or other folder)
+> at the referenced relative paths so they are embedded during PDF conversion.
 
 After step 05, run `SampleContentUnderstandingSkill2/101_knowledge_base.ipynb` unchanged
 (make sure `NAME_PREFIX` and `AZURE_SEARCH_ENDPOINT` match).
@@ -88,7 +90,9 @@ friendly, and is easy to resume.
 4. **Office → PDF** (for `00`, only if you process Excel/PowerPoint/Word): put LibreOffice (`soffice`) on `PATH`,
    or use Windows + Microsoft Excel/PowerPoint/Word + `pywin32`. If neither is available, convert to PDF manually
    and drop the files into `./pdf`
-5. `az login` (when using Entra ID authentication)
+5. **HTML → PDF** (for `00`, only if you process `.html`/`.htm`): install the Chromium browser used by Playwright
+   once with `python -m playwright install chromium`
+6. `az login` (when using Entra ID authentication)
 
 ## Authentication
 

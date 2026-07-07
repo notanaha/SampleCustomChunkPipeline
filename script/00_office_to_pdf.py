@@ -3,8 +3,8 @@
 
 import os as _os, sys as _sys
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
-_sys.path.insert(0, _os.path.dirname(_HERE))  # import utils_cc from parent (customChunkPipeline)
-_os.chdir(_os.path.dirname(_HERE))       # run as if from customChunkPipeline/
+_sys.path.insert(0, _os.path.dirname(_HERE))  # import utils_cc from parent (SampleCustomChunkPipeline)
+_os.chdir(_os.path.dirname(_HERE))       # run as if from SampleCustomChunkPipeline/
 
 import os, shutil, subprocess
 from pathlib import Path
@@ -74,6 +74,24 @@ def word_to_pdf_com(doc_path, pdf_path):
     finally:
         word.Quit()
 
+def html_to_pdf_playwright(html_path, pdf_path):
+    # Renders HTML via headless Chromium (browser-grade fidelity).
+    # Embedded images (SVG / PNG / JPG / etc.) referenced by relative paths
+    # are resolved against the file:// URL, so same- or other-folder assets load.
+    from playwright.sync_api import sync_playwright
+    url = html_path.resolve().as_uri()  # file:// absolute URL -> resolves relative assets
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        try:
+            page = browser.new_page()
+            page.goto(url, wait_until='networkidle')  # wait for images/SVG to load
+            # Keep figures/tables from being split across page boundaries.
+            page.add_style_tag(content='img, svg, table, figure, pre { break-inside: avoid; page-break-inside: avoid; }')
+            page.pdf(path=str(pdf_path.resolve()), print_background=True,
+                     prefer_css_page_size=True, format='A4')
+        finally:
+            browser.close()
+
 soffice = find_soffice()
 print('LibreOffice:', soffice or 'not found (will try Office COM on Windows)')
 
@@ -102,6 +120,10 @@ for src in sorted(DATA_DIR.iterdir()):
             office_to_pdf_soffice(soffice, src, PDF_DIR)
         else:
             word_to_pdf_com(src, pdf_path)
+        print('converted  :', src.name, '->', pdf_path.name)
+    elif src.suffix.lower() in ('.html', '.htm'):
+        pdf_path = PDF_DIR / (src.stem + '.pdf')
+        html_to_pdf_playwright(src, pdf_path)
         print('converted  :', src.name, '->', pdf_path.name)
 
 print('\nPDF dir now contains:', [p.name for p in PDF_DIR.glob('*.pdf')])

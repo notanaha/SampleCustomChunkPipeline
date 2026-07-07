@@ -16,5 +16,8 @@ pdf2image
 Pillow
 # Retry helper
 tenacity
-# Excel -> PDF on Windows (optional; only needed by 00_excel_to_pdf if using Excel COM)
+# Excel/PowerPoint/Word -> PDF on Windows (optional; only needed by 00_office_to_pdf if using Office COM)
 pywin32; platform_system == "Windows"
+# HTML -> PDF via headless Chromium (used by 00_office_to_pdf for .html/.htm).
+# After install, run once: python -m playwright install chromium
+playwright
